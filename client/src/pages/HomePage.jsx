@@ -17,19 +17,20 @@ const HomePage = () => {
 	const getUserProfileAndRepos = useCallback(async(username="pranjalkumar2003") => {
 		setLoading(true);
 		try {
-			const userRes = await fetch(`https://api.github.com/users/${username}`,{
-				headers:{
-					authorization: `token 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`
-				}
-			});
+			const userRes = await fetch(`https://api.github.com/users/${username}`
+			// ,{
+			// 	headers:{
+			// 		authorization: `token ${import.meta.env.VITE_GITHUB_API_KEY} `
+			// 	},
+			// }
+			);
 			const userProfile = await userRes.json();
 			setUserProfile(userProfile);
 
 			const repoRes = await fetch(userProfile.repos_url);
 		    const repos = await repoRes.json();
+			repos.sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
 		    setRepos(repos);
-		    console.log("userProfile:", userProfile);
-		    console.log("repos:", repos);
 
 			return {userProfile,repos};
 
@@ -56,6 +57,7 @@ const HomePage = () => {
 		setUserProfile(userProfile);
 		setRepos(repos);
 		setLoading(false);
+		setSortType("recent");
 	};
 
 	const onSort = (sortType) => {
