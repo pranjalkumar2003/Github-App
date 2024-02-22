@@ -17,22 +17,15 @@ const HomePage = () => {
 	const getUserProfileAndRepos = useCallback(async(username="pranjalkumar2003") => {
 		setLoading(true);
 		try {
-			const userRes = await fetch(`https://api.github.com/users/${username}`
-			// ,{
-			// 	headers:{
-			// 		authorization: `token ${import.meta.env.VITE_GITHUB_API_KEY} `
-			// 	},
-			// }
-			);
-			const userProfile = await userRes.json();
-			setUserProfile(userProfile);
 
-			const repoRes = await fetch(userProfile.repos_url);
-		    const repos = await repoRes.json();
+			const res = await fetch(`http://localhost:5000/api/users/profile/${username}`);
+			const { repos, userProfile } = await res.json();
+
 			repos.sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
 		    setRepos(repos);
+			setUserProfile(userProfile);
 
-			return {userProfile,repos};
+			return { userProfile, repos };
 
 		} catch (error) {
 			toast.error(error.message);
