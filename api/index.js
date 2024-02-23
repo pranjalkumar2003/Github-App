@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from 'cors';
 import passport from "passport";
 import session from "express-session";
+import path from "path";
 
 import "./passport/github.auth.js";
 
@@ -15,6 +16,7 @@ import connectMongoDB from './db/connectMongoDB.js';
 dotenv.config();
 
 const app = express();
+const __dirname = path.resolve();
 
 app.use(session({ secret: "keyboard cat", resave: false, saveUninitialized: false }));
 // Initialize Passport!  Also use passport.session() middleware, to support
@@ -24,13 +26,20 @@ app.use(passport.session());
 
 app.use(cors());
 
-app.get("/",(req, res) => {
-    res.send({"message":"server is fetching the data"});
-});
+// app.get("/",(req, res) => {
+//     res.send({"message":"server is fetching the data"});
+// });
 
 app.use("/api/auth",authRoutes);
 app.use("/api/users",userRoutes);
 app.use("/api/explore",exploreRoutes);
+
+app.use(express.static(path.join(__dirname, "/client/dist")));
+
+app.get("*", (req, res) => {
+	res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
+
 
 app.listen(5000,()=>{
     console.log(new Date(Date.now()).toLocaleString().split(',')[1] + " || Server is running on port 5000 !!");
