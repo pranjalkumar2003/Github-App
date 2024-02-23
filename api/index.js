@@ -1,9 +1,9 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 import cors from 'cors';
-
 import userRoutes from "./routes/user.route.js";
 import exploreRoutes from "./routes/explore.route.js";
+import connectMongoDB from './db/connectMongoDB.js';
 
 dotenv.config();
 
@@ -19,4 +19,5 @@ app.use("/api/explore",exploreRoutes);
 
 app.listen(5000,()=>{
     console.log(new Date(Date.now()).toLocaleString().split(',')[1] + " || Server is running on port 5000 !!");
+    connectMongoDB();
 });
